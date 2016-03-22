@@ -24,7 +24,7 @@ def _process_response(res):
     '''Processes the API response, raising exception if that's the case.'''
 
     result = res.json()
-    res_code = result.get('res_code', None)
+    res_code = int(result.get('res_code', -1))  # fxxk this can be string
     if res.status_code != 200 or res_code != 0:
         raise Open189Error(
                 res.status_code,
