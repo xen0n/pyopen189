@@ -26,7 +26,7 @@ def extract_version():
 with open('README.rst', 'rb') as f_readme:
     readme = f_readme.read().decode('utf-8')
 
-packages = ['pyopen189']
+packages = [str('pyopen189')]
 
 version = extract_version()
 
