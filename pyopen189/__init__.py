@@ -11,7 +11,7 @@ import requests
 from . import sig
 from . import util
 
-__version__ = '0.2.dev0'
+__version__ = '0.2'
 
 
 class Open189Error(RuntimeError):
