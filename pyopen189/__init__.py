@@ -94,7 +94,7 @@ class Open189App(object):
                 )
 
     def get_access_token_ac(self, code, redirect_uri):
-        '''Gets an access token in the Authorization Code mode.
+        '''Gets an access token with the Authorization Code flow.
 
         Access token parameter is ignored.
 
@@ -107,7 +107,8 @@ class Open189App(object):
                 )
 
     def get_access_token_cc(self):
-        '''Gets an user-independent access token in the Client Credentials mode.
+        '''Gets a user-independent access token with the Client Credentials
+        flow.
 
         Access token parameter is ignored.
 
