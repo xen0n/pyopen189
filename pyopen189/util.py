@@ -17,12 +17,12 @@ def force_binary(s, enc='utf-8'):
     '''Forces the input parameter into binary type of current Python. The input
     parameter is assumed to be either str or unicode.
 
-    >>> from __future__ import unicode_literals
-    >>> import six
-    >>> isinstance(force_binary('abc'), six.binary_type)
-    True
-    >>> isinstance(force_binary(b'abc'), six.binary_type)
-    True
+        >>> from __future__ import unicode_literals
+        >>> import six
+        >>> isinstance(force_binary('abc'), six.binary_type)
+        True
+        >>> isinstance(force_binary(b'abc'), six.binary_type)
+        True
 
     '''
 
