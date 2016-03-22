@@ -82,6 +82,30 @@ class Open189App(object):
         data = self._prepare_request_params(params) if prepare else params
         return _process_response(requests.post(url, data=data))
 
+    def _perform_access_token_req(self, **kwargs):
+        kwargs['app_id'] = self.app_id,
+        kwargs['app_secret'] = self.secret
+        kwargs['state'] = util.get_random_state_str()
+
+        return self._perform_post_sync(
+                'https://oauth.api.189.cn/emp/oauth2/v3/access_token',
+                params,
+                False,
+                )
+
+    def get_access_token_ac(self, code, redirect_uri):
+        '''Gets an access token in the Authorization Code mode.
+
+        Access token parameter is ignored.
+
+        '''
+
+        return self._perform_access_token_req(
+                grant_type='authorization_code',
+                code=code,
+                redirect_uri=redirect_uri,
+                )
+
     def get_access_token_cc(self):
         '''Gets an user-independent access token in the Client Credentials mode.
 
@@ -89,17 +113,20 @@ class Open189App(object):
 
         '''
 
-        params = {
-                'grant_type': 'client_credentials',
-                'app_id': self.app_id,
-                'app_secret': self.secret,
-                'state': util.get_random_state_str(),
-                }
+        return self._perform_access_token_req(
+                grant_type='client_credentials',
+                )
 
-        return self._perform_post_sync(
-                'https://oauth.api.189.cn/emp/oauth2/v3/access_token',
-                params,
-                False,
+    def refresh_access_token(self, refresh_token):
+        '''Refresh access token using a previously returned refresh token.
+
+        Access token parameter is ignored.
+
+        '''
+
+        return self._perform_access_token_req(
+                grant_type='refresh_token',
+                refresh_token=refresh_token,
                 )
 
     def sms_get_token(self):

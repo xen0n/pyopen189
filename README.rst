@@ -10,7 +10,10 @@ BSD-licensed
 Implemented features
 --------------------
 
-* User-independent access token
+* Access token requests
+    - Authorization Code flow
+    - Client Credentials flow
+    - Refreshing
 * SMS capabilities
     - SMS token request
     - Verification code; both platform- and self-generated codes supported
