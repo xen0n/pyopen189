@@ -5,12 +5,15 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import base64
 import datetime
+import json
 import os
 
 import six
 import pytz
 
 OPEN189_TZ = pytz.timezone('Asia/Shanghai')
+
+JSON_COMPACT_SEP = (',', ':', )
 
 
 def force_binary(s, enc='utf-8'):
@@ -44,3 +47,9 @@ def get_random_state_str():
     '''Generates a (sufficiently) random string for tracking OAuth requests.'''
 
     return base64.b64encode(os.urandom(30))
+
+
+def json_dumps_compact(obj):
+    '''Serializes the given object into compact JSON.'''
+
+    return json.dumps(params, ensure_ascii=False, separators=JSON_COMPACT_SEP)

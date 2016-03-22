@@ -3,6 +3,8 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import json
+
 import six
 import requests
 
@@ -190,5 +192,24 @@ class Open189App(object):
 
         return self._perform_post_sync(
                 endpoint,
+                params,
+                )
+
+    def sms_send_template(self, phone, template_id, template_params):
+        '''Sends a template SMS to the specified phone.
+
+        Access token is required.
+
+        '''
+
+        template_params_json = util.json_dumps_compact(template_params)
+        params = {
+                'acceptor_tel': phone,
+                'template_id': template_id,
+                'template_param': template_params_json,
+                }
+
+        return self._perform_post_sync(
+                'http://api.189.cn/v2/emp/templateSms/sendSms',
                 params,
                 )
