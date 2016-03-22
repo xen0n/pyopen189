@@ -4,7 +4,7 @@ Unofficial Python client for open.189.cn (天翼开放平台)
 License
 -------
 
-MIT-licensed
+BSD-licensed
 
 
 Implemented features
