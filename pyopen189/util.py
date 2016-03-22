@@ -5,6 +5,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import base64
 import datetime
+import json
 import os
 
 import six
@@ -12,17 +13,19 @@ import pytz
 
 OPEN189_TZ = pytz.timezone('Asia/Shanghai')
 
+JSON_COMPACT_SEP = (',', ':', )
+
 
 def force_binary(s, enc='utf-8'):
     '''Forces the input parameter into binary type of current Python. The input
     parameter is assumed to be either str or unicode.
 
-    >>> from __future__ import unicode_literals
-    >>> import six
-    >>> isinstance(force_binary('abc'), six.binary_type)
-    True
-    >>> isinstance(force_binary(b'abc'), six.binary_type)
-    True
+        >>> from __future__ import unicode_literals
+        >>> import six
+        >>> isinstance(force_binary('abc'), six.binary_type)
+        True
+        >>> isinstance(force_binary(b'abc'), six.binary_type)
+        True
 
     '''
 
@@ -44,3 +47,9 @@ def get_random_state_str():
     '''Generates a (sufficiently) random string for tracking OAuth requests.'''
 
     return base64.b64encode(os.urandom(30))
+
+
+def json_dumps_compact(obj):
+    '''Serializes the given object into compact JSON.'''
+
+    return json.dumps(params, ensure_ascii=False, separators=JSON_COMPACT_SEP)

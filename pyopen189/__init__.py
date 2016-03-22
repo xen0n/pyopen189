@@ -3,13 +3,15 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import json
+
 import six
 import requests
 
 from . import sig
 from . import util
 
-__version__ = '0.1.2'
+__version__ = '0.2'
 
 
 class Open189Error(RuntimeError):
@@ -24,7 +26,7 @@ def _process_response(res):
     '''Processes the API response, raising exception if that's the case.'''
 
     result = res.json()
-    res_code = result.get('res_code', None)
+    res_code = int(result.get('res_code', -1))  # fxxk this can be string
     if res.status_code != 200 or res_code != 0:
         raise Open189Error(
                 res.status_code,
@@ -82,24 +84,52 @@ class Open189App(object):
         data = self._prepare_request_params(params) if prepare else params
         return _process_response(requests.post(url, data=data))
 
-    def get_access_token_cc(self):
-        '''Gets an user-independent access token in the Client Credentials mode.
-
-        Access token parameter is ignored.
-
-        '''
-
-        params = {
-                'grant_type': 'client_credentials',
-                'app_id': self.app_id,
-                'app_secret': self.secret,
-                'state': util.get_random_state_str(),
-                }
+    def _perform_access_token_req(self, **kwargs):
+        kwargs['app_id'] = self.app_id,
+        kwargs['app_secret'] = self.secret
+        kwargs['state'] = util.get_random_state_str()
 
         return self._perform_post_sync(
                 'https://oauth.api.189.cn/emp/oauth2/v3/access_token',
                 params,
                 False,
+                )
+
+    def get_access_token_ac(self, code, redirect_uri):
+        '''Gets an access token with the Authorization Code flow.
+
+        Access token parameter is ignored.
+
+        '''
+
+        return self._perform_access_token_req(
+                grant_type='authorization_code',
+                code=code,
+                redirect_uri=redirect_uri,
+                )
+
+    def get_access_token_cc(self):
+        '''Gets a user-independent access token with the Client Credentials
+        flow.
+
+        Access token parameter is ignored.
+
+        '''
+
+        return self._perform_access_token_req(
+                grant_type='client_credentials',
+                )
+
+    def refresh_access_token(self, refresh_token):
+        '''Refresh access token using a previously returned refresh token.
+
+        Access token parameter is ignored.
+
+        '''
+
+        return self._perform_access_token_req(
+                grant_type='refresh_token',
+                refresh_token=refresh_token,
                 )
 
     def sms_get_token(self):
@@ -162,5 +192,24 @@ class Open189App(object):
 
         return self._perform_post_sync(
                 endpoint,
+                params,
+                )
+
+    def sms_send_template(self, phone, template_id, template_params):
+        '''Sends a template SMS to the specified phone.
+
+        Access token is required.
+
+        '''
+
+        template_params_json = util.json_dumps_compact(template_params)
+        params = {
+                'acceptor_tel': phone,
+                'template_id': template_id,
+                'template_param': template_params_json,
+                }
+
+        return self._perform_post_sync(
+                'http://api.189.cn/v2/emp/templateSms/sendSms',
                 params,
                 )
