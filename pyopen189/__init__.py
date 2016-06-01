@@ -85,13 +85,13 @@ class Open189App(object):
         return _process_response(requests.post(url, data=data))
 
     def _perform_access_token_req(self, **kwargs):
-        kwargs['app_id'] = self.app_id,
+        kwargs['app_id'] = self.app_id
         kwargs['app_secret'] = self.secret
         kwargs['state'] = util.get_random_state_str()
 
         return self._perform_post_sync(
                 'https://oauth.api.189.cn/emp/oauth2/v3/access_token',
-                params,
+                kwargs,
                 False,
                 )
 
