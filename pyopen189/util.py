@@ -52,4 +52,4 @@ def get_random_state_str():
 def json_dumps_compact(obj):
     '''Serializes the given object into compact JSON.'''
 
-    return json.dumps(params, ensure_ascii=False, separators=JSON_COMPACT_SEP)
+    return json.dumps(obj, ensure_ascii=False, separators=JSON_COMPACT_SEP)
