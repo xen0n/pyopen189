@@ -7,16 +7,21 @@ import base64
 import datetime
 import json
 import os
+try:
+    from typing import AnyStr, Text, Any
+except ImportError:
+    pass
 
 import six
 import pytz
 
-OPEN189_TZ = pytz.timezone('Asia/Shanghai')
+OPEN189_TZ = pytz.timezone('Asia/Shanghai')  # type: Any
 
 JSON_COMPACT_SEP = (',', ':', )
 
 
 def force_binary(s, enc='utf-8'):
+    # type: (AnyStr, Text) -> bytes
     '''Forces the input parameter into binary type of current Python. The input
     parameter is assumed to be either str or unicode.
 
@@ -35,6 +40,7 @@ def force_binary(s, enc='utf-8'):
 
 
 def get_timestamp():
+    # type: () -> str
     '''Generates a timestamp suitable for the open.189.cn platform.'''
 
     # NOTE: it seems the platform implicitly requires a timestamp in
@@ -44,12 +50,14 @@ def get_timestamp():
 
 
 def get_random_state_str():
+    # type: () -> bytes
     '''Generates a (sufficiently) random string for tracking OAuth requests.'''
 
     return base64.b64encode(os.urandom(30))
 
 
 def json_dumps_compact(obj):
+    # type: (object) -> Text
     '''Serializes the given object into compact JSON.'''
 
     return json.dumps(obj, ensure_ascii=False, separators=JSON_COMPACT_SEP)

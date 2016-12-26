@@ -4,6 +4,10 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import json
+try:
+    from typing import Any, AnyStr, Text, MutableMapping, Optional, Union
+except ImportError:
+    pass
 
 import six
 import requests
@@ -16,6 +20,7 @@ __version__ = '0.4.dev0'
 
 class Open189Error(RuntimeError):
     def __init__(self, status_code, res_code, message):
+        # type: (int, int, Text) -> None
         msg = '[HTTP {} res_code {}] {}'.format(status_code, res_code, message)
         super(Open189Error, self).__init__(msg)
         self.status_code = status_code
@@ -23,6 +28,7 @@ class Open189Error(RuntimeError):
 
 
 def _process_response(res):
+    # type: (requests.models.Response) -> Any
     '''Processes the API response, raising exception if that's the case.'''
 
     result = res.json()
@@ -41,14 +47,16 @@ class Open189App(object):
     '''SDK client for the open.189.cn platform.'''
 
     def __init__(self, app_id, secret, access_token=None):
-        self.app_id = util.force_binary(app_id)
-        self.secret = util.force_binary(secret)
+        # type: (AnyStr, AnyStr, AnyStr) -> None
+        self.app_id = util.force_binary(app_id)  # type: bytes
+        self.secret = util.force_binary(secret)  # type: bytes
         if access_token is not None:
-            self.access_token = util.force_binary(access_token)
+            self.access_token = util.force_binary(access_token)  # type: Optional[bytes]
         else:
-            self.access_token = None
+            self.access_token = None  # type: Optional[bytes]
 
     def _prepare_request_params(self, params):
+        # type: (dict) -> dict
         '''Prepares request parameters for sending (not needed for OAuth
         requests).
 
@@ -71,6 +79,7 @@ class Open189App(object):
         return params
 
     def _perform_get_sync(self, url, params, prepare=True):
+        # type: (Text, dict, bool) -> Any
         '''Performs a blocking API GET request to the specified endpoint with
         the specified parameters, raising exceptions appropriately.'''
 
@@ -78,6 +87,7 @@ class Open189App(object):
         return _process_response(requests.get(url, params=data))
 
     def _perform_post_sync(self, url, params, prepare=True):
+        # type: (Text, dict, bool) -> Any
         '''Performs a blocking API POST request to the specified endpoint with
         the specified parameters, raising exceptions appropriately.'''
 
@@ -85,6 +95,7 @@ class Open189App(object):
         return _process_response(requests.post(url, data=data))
 
     def _perform_access_token_req(self, **kwargs):
+        # type: (**Union[bytes, str]) -> Any
         kwargs['app_id'] = self.app_id
         kwargs['app_secret'] = self.secret
         kwargs['state'] = util.get_random_state_str()
@@ -96,6 +107,7 @@ class Open189App(object):
                 )
 
     def get_access_token_ac(self, code, redirect_uri):
+        # type: (AnyStr, AnyStr) -> Any
         '''Gets an access token with the Authorization Code flow.
 
         Access token parameter is ignored.
@@ -109,6 +121,7 @@ class Open189App(object):
                 )
 
     def get_access_token_cc(self):
+        # type: () -> Any
         '''Gets a user-independent access token with the Client Credentials
         flow.
 
@@ -121,6 +134,7 @@ class Open189App(object):
                 )
 
     def refresh_access_token(self, refresh_token):
+        # type: (AnyStr) -> Any
         '''Refresh access token using a previously returned refresh token.
 
         Access token parameter is ignored.
@@ -133,6 +147,7 @@ class Open189App(object):
                 )
 
     def sms_get_token(self):
+        # type: () -> Any
         '''Gets a token for sending verification SMS.
 
         Access token is required.
@@ -146,12 +161,13 @@ class Open189App(object):
 
     def sms_send_verification_sms(
             self,
-            token,
-            phone,
-            code=None,
-            callback_url=None,
-            exp_time_min=None,
+            token,  # type: AnyStr
+            phone,  # type: AnyStr
+            code=None,  # type: AnyStr
+            callback_url=None,  # type: AnyStr
+            exp_time_min=None,  # type: int
             ):
+        # type: (...) -> Any
         '''Sends a verification SMS to the specified phone.
 
         Needs a token obtained with :meth:`sms_get_token`. Expiry time is in
@@ -196,6 +212,7 @@ class Open189App(object):
                 )
 
     def sms_send_template(self, phone, template_id, template_params):
+        # type: (AnyStr, AnyStr, object) -> Any
         '''Sends a template SMS to the specified phone.
 
         Access token is required.

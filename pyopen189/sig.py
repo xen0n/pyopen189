@@ -13,6 +13,7 @@ from .util import force_binary
 
 
 def transform_payload(d):
+    # type: (dict) -> bytes
     '''Transforms payload for request signature generation.
 
     Meant for internal use; don't call this manually.
@@ -41,6 +42,7 @@ def transform_payload(d):
 
 
 def sign(d, secret):
+    # type: (dict, bytes) -> bytes
     '''Generates signature for the given payload and app secret.
 
     Meant for internal use; don't call this manually.
