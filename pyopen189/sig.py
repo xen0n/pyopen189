@@ -30,11 +30,11 @@ def transform_payload(d):
 
     params = []
 
-    keys = [force_binary(k) for k in six.iterkeys(d)]
+    keys = [(force_binary(k), k) for k in six.iterkeys(d)]
     keys.sort()
 
-    for k_bin in keys:
-        v_bin = force_binary(d[k_bin])
+    for (k_bin, k) in keys:
+        v_bin = force_binary(d[k])
 
         params.append(b'%s=%s' % (k_bin, v_bin))
 
