@@ -48,12 +48,32 @@ class Open189App(object):
 
     def __init__(self, app_id, secret, access_token=None):
         # type: (AnyStr, AnyStr, AnyStr) -> None
-        self.app_id = util.force_binary(app_id)  # type: bytes
-        self.secret = util.force_binary(secret)  # type: bytes
+        self._app_id = util.force_binary(app_id)  # type: bytes
+        self._secret = util.force_binary(secret)  # type: bytes
         if access_token is not None:
-            self.access_token = util.force_binary(access_token)  # type: Optional[bytes]
+            self._access_token = util.force_binary(access_token)  # type: Optional[bytes]
         else:
-            self.access_token = None  # type: Optional[bytes]
+            self._access_token = None  # type: Optional[bytes]
+
+    @property
+    def app_id(self):
+        # type: () -> bytes
+        return self._app_id
+
+    @property
+    def secret(self):
+        # type: () -> bytes
+        return self._secret
+
+    @property
+    def access_token(self):
+        # type: () -> Optional[bytes]
+        return self._access_token
+
+    @access_token.setter
+    def access_token(self, v):
+        # type: (AnyStr) -> None
+        self._access_token = util.force_binary(v)  # type: Optional[bytes]
 
     def _prepare_request_params(self, params):
         # type: (dict) -> dict
